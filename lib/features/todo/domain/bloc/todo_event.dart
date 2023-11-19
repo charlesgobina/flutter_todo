@@ -33,7 +33,7 @@ class TodoUpdateEvent extends TodoEvent {
   final String title;
   final String description;
   final String time;
-  final String category;
+  var category;
   final bool isDone;
 
   TodoUpdateEvent(

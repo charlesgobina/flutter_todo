@@ -2,7 +2,7 @@ class TodoModel {
   String title;
   String description;
   String date;
-  String category;
+  var category;
   bool isDone;
 
   DateTime now = DateTime.now();

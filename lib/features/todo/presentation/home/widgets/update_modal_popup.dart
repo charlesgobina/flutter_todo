@@ -42,24 +42,32 @@ class _TextFieldUpdatePopupDialogState
 
   final TextEditingController _dateController = TextEditingController();
 
-  String _selectedItem = 'Work';
-
+  // ValueNotifier for the selected item in the dropdown
+  ValueNotifier<String> _selectedItem = ValueNotifier<String>('Work');
+  final ValueNotifier<DateTime?> _selectedDate =
+      ValueNotifier<DateTime?>(DateTime.now());
   // List of items for the dropdown
   final List<String> _dropdownItems = ['Work', 'Caasitech', 'Personal'];
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: _selectedDate.value ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
 
-    if (picked != null && picked != DateTime.now()) {
-      setState(() {
-        _dateController.text = picked.toString();
-      });
+    if (picked != null && picked != _selectedDate.value) {
+      _selectedDate.value = picked;
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _dateController.dispose();
+    super.dispose();
   }
 
   @override
@@ -71,7 +79,7 @@ class _TextFieldUpdatePopupDialogState
           _titleController.text = state.todos[widget.index].title;
           _descriptionController.text = state.todos[widget.index].description;
           _dateController.text = state.todos[widget.index].date;
-          _selectedItem = state.todos[widget.index].category;
+          _selectedItem.value = state.todos[widget.index].category;
 
           return AlertDialog(
             title: const Center(child: Text('Enter Text')),
@@ -93,7 +101,7 @@ class _TextFieldUpdatePopupDialogState
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              // const SizedBox(height: 10),
               Row(
                 children: [
                   const Icon(Icons.list_alt_rounded),
@@ -125,7 +133,9 @@ class _TextFieldUpdatePopupDialogState
                           hintText: "Title",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20.0))),
-                      onTap: () => _selectDate(context),
+                      onTap: () {
+                        _selectDate(context);
+                      },
                     ),
                   ),
                 ],
@@ -134,28 +144,31 @@ class _TextFieldUpdatePopupDialogState
               Row(
                 children: [
                   const Icon(Icons.tag_outlined),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
+                  const SizedBox(width: 10.0),
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _selectedItem,
-                      items: _dropdownItems.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
+                    child: ValueListenableBuilder<String>(
+                      valueListenable:
+                          _selectedItem, // Wrap _selectedItem with ValueNotifier
+                      builder: (context, selectedItem, child) {
+                        return DropdownButtonFormField<String>(
+                          value: selectedItem,
+                          items: _dropdownItems.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
+                          onChanged: (String? selectedItem) {
+                            _selectedItem.value = selectedItem ?? 'Work';
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Select an option",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
                         );
-                      }).toList(),
-                      onChanged: (String? selectedItem) {
-                        setState(() {
-                          _selectedItem = selectedItem!;
-                        });
                       },
-                      decoration: InputDecoration(
-                        hintText: "Select an option",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                      ),
                     ),
                   ),
                 ],
@@ -177,7 +190,7 @@ class _TextFieldUpdatePopupDialogState
                   String title = _titleController.text;
                   String desc = _descriptionController.text;
                   String date = _dateController.text;
-                  String category = _selectedItem;
+                  var category = _selectedItem.value;
 
                   widget.todoBloc.add(TodoUpdateEvent(
                       index: widget.index,

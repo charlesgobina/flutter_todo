@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:caasi_todo/features/todo/model/todo_model.dart';
+import 'package:caasi_todo/features/todo/data/model/todo_model.dart';
 import 'package:caasi_todo/main.dart';
 import 'package:meta/meta.dart';
 import 'package:intl/intl.dart';
@@ -71,6 +71,17 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
               date: event.time,
               category: event.category,
               isDone: event.isDone));
+
+    // loop through updatedTodos and print each item
+    for (var i = 0; i < updatedTodos.length; i++) {
+      print(updatedTodos[i].title);
+      print(updatedTodos[i].description);
+      print(updatedTodos[i].date);
+      print(updatedTodos[i].category);
+      print(updatedTodos[i].isDone);
+      // new line
+      print('');
+    }
 
     // Emit a new TodoUpdateState with the updated todos list
     emit(TodoAddState(todos: updatedTodos));

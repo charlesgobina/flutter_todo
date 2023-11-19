@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "125771631778",
+    "project_id": "caasi-todo",
+    "storage_bucket": "caasi-todo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125771631778:android:c40654efa57181a6549bfb",
+        "android_client_info": {
+          "package_name": "com.example.caasi_todo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQfj1aupWEktuRxoyuP4Pdg_6-mTijj8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
